@@ -1,20 +1,38 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17
+CXXFLAGS = -Wall -Wextra -std=c++17 -I.  # Include the current directory
 
-# SDL2 flags
 SDL2_CFLAGS = $(shell sdl2-config --cflags)
 SDL2_LDFLAGS = $(shell sdl2-config --libs)
 
-# Source and output
-SRC = main.cpp
-OUT = bin/PathFinder
+# Directories
+SRCDIR = Code
+BUILDDIR = build
+BINDIR = build
 
-# Build rules
-all: $(OUT)
+# Source files
+SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 
-$(OUT): $(SRC)
-	$(CXX) $(CXXFLAGS) $(SDL2_CFLAGS) -o $(OUT) $(SRC) $(SDL2_LDFLAGS)
+# Object files
+OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(BUILDDIR)/%.o, $(SOURCES))
+
+# Output binary
+TARGET = $(BINDIR)/program
+
+# Rules
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	@mkdir -p $(BINDIR)
+	$(CXX) $(CXXFLAGS) $(SDL2_CFLAGS) $(OBJECTS) -o $@ $(SDL2_LDFLAGS)
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(BUILDDIR)
+	$(CXX) $(CXXFLAGS) $(SDL2_CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OUT)
+	rm -rf $(BUILDDIR) $(TARGET)
+
+# Debug
+debug: CXXFLAGS += -g
+debug: clean all
