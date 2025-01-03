@@ -2,15 +2,17 @@
 #include <iostream>
 #include <cmath>
 #include "utils.h"
+#include "BruteForce.h"
 using namespace std;
 
 // Variables
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 
-void DrawLine(SDL_Renderer *renderer, int x1, int y1, int x2, int y2)
+void DrawLine(SDL_Renderer *renderer, Line *line)
 {
-    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+
+    SDL_RenderDrawLine(renderer, line->A->x, line->A->y, line->B->x, line->B->y);
 }
 
 void DrawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius)
@@ -29,11 +31,20 @@ void DrawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius)
     }
 }
 
-void DrawPoints(SDL_Renderer *renderer, pair<int, int> *Points, int p_Amount)
+void DrawPoints(SDL_Renderer *renderer, Point *Points, int p_Amount)
 {
     for (int i = 0; i < p_Amount; i++)
     {
-        DrawCircle(renderer, Points[i].first, Points[i].second, 6);
+        DrawCircle(renderer, Points[i].x, Points[i].y, 6);
+    }
+}
+void DrawLines(SDL_Renderer *renderer, LineLinkedList *lineLinkedList)
+{
+    LineLinkedList *current = lineLinkedList;
+    while (current)
+    {
+        DrawLine(renderer, current->line);
+        current = current->nextNode;
     }
 }
 
@@ -46,11 +57,16 @@ int main()
     cout << "Enter the size of the array: ";
     cin >> pointsAmount;
 
-    pair<int, int> Points[pointsAmount];
+    Point Points[pointsAmount];
     for (int i = 0; i < pointsAmount; i++)
     {
         Points[i] = getRandomPoint(WINDOW_WIDTH, WINDOW_HEIGHT);
     }
+    BruteForce *br = new BruteForce(Points, pointsAmount);
+
+    LineLinkedList *head = br->getCurrentLinkedListHead();
+
+    cout << calcPathLength(head);
 
     //************* Window init
     // Initialize SDL
@@ -93,19 +109,16 @@ int main()
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        // Draw the circle
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Green color
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
         DrawPoints(renderer, Points, pointsAmount);
+        DrawLines(renderer, head);
 
-        DrawLine(renderer, 200, 200, 300, 300);
+        // DrawLine(renderer, &line);
 
-        // Present the renderer
-        SDL_RenderPresent(renderer);
-        // Present the renderer
         SDL_RenderPresent(renderer);
     }
 
