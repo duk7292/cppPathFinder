@@ -28,9 +28,17 @@ BruteForce::BruteForce(Point *points, int p_Amount)
         }
     }
     List->nextNode = nullptr;
-};
+}
 
-LineLinkedList *BruteForce::getCurrentLinkedListHead()
+LineLinkedList *BruteForce::getShortesPathHead()
 {
-    return ListHead;
+    return ShortestPathHead;
+}
+
+void BruteForce::iterate(int reps)
+{
+}
+
+LineLinkedList *BruteForce::getPathById(int id)
+{
 }

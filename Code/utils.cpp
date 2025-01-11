@@ -20,6 +20,30 @@ Point getRandomPoint(int screenWidth, int screenHeight)
 
     return r_p;
 }
+LinkedPath *copyLinkedPath(const LinkedPath *original)
+{
+    if (!original)
+        return nullptr; // Handle empty list
+
+    // Create a new head node
+    LinkedPath *newHead = new LinkedPath{original->point, nullptr};
+    LinkedPath *currentNew = newHead;
+    const LinkedPath *currentOriginal = original->nextPoint;
+
+    // Traverse the original list and copy nodes
+    while (currentOriginal)
+    {
+        // Create a new node
+        LinkedPath *newNode = new LinkedPath{currentOriginal->point, nullptr};
+        // Link the new node to the new list
+        currentNew->nextPoint = newNode;
+        // Advance both pointers
+        currentNew = newNode;
+        currentOriginal = currentOriginal->nextPoint;
+    }
+
+    return newHead;
+}
 
 int calcPathLength(LineLinkedList *path)
 {

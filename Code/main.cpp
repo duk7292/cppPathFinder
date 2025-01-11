@@ -38,7 +38,7 @@ void DrawPoints(SDL_Renderer *renderer, Point *Points, int p_Amount)
         DrawCircle(renderer, Points[i].x, Points[i].y, 6);
     }
 }
-void DrawLines(SDL_Renderer *renderer, LineLinkedList *lineLinkedList)
+void DrawPath(SDL_Renderer *renderer, LineLinkedList *lineLinkedList)
 {
     LineLinkedList *current = lineLinkedList;
     while (current)
@@ -62,11 +62,6 @@ int main()
     {
         Points[i] = getRandomPoint(WINDOW_WIDTH, WINDOW_HEIGHT);
     }
-    BruteForce *br = new BruteForce(Points, pointsAmount);
-
-    LineLinkedList *head = br->getCurrentLinkedListHead();
-
-    cout << calcPathLength(head);
 
     //************* Window init
     // Initialize SDL
@@ -115,9 +110,7 @@ int main()
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
         DrawPoints(renderer, Points, pointsAmount);
-        DrawLines(renderer, head);
-
-        // DrawLine(renderer, &line);
+        // DrawPath(renderer, head);
 
         SDL_RenderPresent(renderer);
     }
