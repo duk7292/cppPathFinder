@@ -7,6 +7,7 @@
 #include <ctime>
 #include <cmath>
 #include <limits.h>
+
 using namespace std;
 
 struct Point
@@ -15,11 +16,7 @@ struct Point
     int y;
 };
 
-struct Line
-{
-    Point *A;
-    Point *B;
-};
+
 
 struct LinkedPath
 {
@@ -27,11 +24,7 @@ struct LinkedPath
     LinkedPath *nextPoint;
 };
 
-struct LineLinkedList
-{
-    Line *line;
-    LineLinkedList *nextNode;
-};
+
 
 LinkedPath *copyLinkedPath(const LinkedPath *original);
 
@@ -39,8 +32,13 @@ Point getRandomPoint(int screenWidth, int screenHeight);
 
 void ShiftPathAt(int pos, LinkedPath *path);
 
-int calcLineLength(Line *line);
+void FreeLinkedPath(LinkedPath* head) ;
 
-int calcPathLength(LineLinkedList *lineLinkedList);
+int calcPathLength(LinkedPath *path);
+
+long fact(int x);
+
+
+
 
 #endif // UTILS_H

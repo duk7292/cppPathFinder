@@ -20,6 +20,8 @@ Point getRandomPoint(int screenWidth, int screenHeight)
 
     return r_p;
 }
+
+
 LinkedPath *copyLinkedPath(const LinkedPath *original)
 {
     if (!original)
@@ -44,28 +46,106 @@ LinkedPath *copyLinkedPath(const LinkedPath *original)
 
     return newHead;
 }
+void ShiftPathAt(int pos, LinkedPath* path) {
+    if (!path || pos <= 0) return; // Handle edge cases
 
-int calcPathLength(LineLinkedList *path)
-{
-    int Length = 0;
-    LineLinkedList *current = path;
+    LinkedPath* current = path;
+    LinkedPath* targetNode = nullptr;
+    LinkedPath* targetNextNode = nullptr;
+    LinkedPath* lastNode = nullptr;
+    LinkedPath* secondToLastNode = nullptr;
 
-    while (current)
-    {
-        Length += calcLineLength(current->line);
-        current = current->nextNode;
+    int length = 0;
+
+    // Find the length of the path
+    while (current) {
+        ++length;
+        current = current->nextPoint;
     }
-    return Length;
+
+    if (pos > length) return; // If position is out of bounds
+
+    // Reset current pointer to head
+    current = path;
+
+    // Traverse the path again to find key nodes
+    for (int i = 1; current; ++i) {
+        if (i == length - pos) targetNode = current; // Node at (length - pos)
+        if (i == length - pos + 1) targetNextNode = current; // Node after targetNode
+        if (i == length) lastNode = current; // Last node
+        if (i == length - 1) secondToLastNode = current; // Second-to-last node
+
+        current = current->nextPoint;
+    }
+
+    // Rearrange pointers
+    if (targetNode && lastNode && secondToLastNode && targetNextNode) {
+        targetNode->nextPoint = lastNode;       // Target node points to last node
+        lastNode->nextPoint = targetNextNode;  // Last node points to targetNextNode
+        secondToLastNode->nextPoint = nullptr; // Second-to-last node is disconnected
+    }
 }
-int calcLineLength(Line *line)
+int calcPathLength(LinkedPath *path)
 {
-    int x1 = line->A->x;
-    int y1 = line->A->y;
-    int x2 = line->B->x;
-    int y2 = line->B->y;
+    int x1 ;
+    int y1 ;
+    int x2 ;
+    int y2 ;
 
-    int SideA = x1 - x2;
-    int SideB = y1 - y2;
+    int SideA;
+    int SideB;
 
-    return sqrt((SideA * SideA) + (SideB * SideB));
+   
+    int length = 0;
+    LinkedPath *current = path;
+    Point * first = current->point;
+    while (current->nextPoint)
+    { 
+        x1 = current->point->x;
+        y1 = current->point->y;
+        x2 = current->nextPoint->point->x;
+        y2 = current->nextPoint->point->y;
+
+        SideA = x1 - x2;
+        SideB = y1 - y2;
+
+        length+=sqrt((SideA * SideA) + (SideB * SideB));
+       
+        current = current->nextPoint;
+    }
+        x1 = current->point->x;
+        y1 = current->point->y;
+        x2 = first->x;
+        y2 = first->y;
+
+        SideA = x1 - x2;
+        SideB = y1 - y2;
+
+        length+=sqrt((SideA * SideA) + (SideB * SideB));
+    
+
+    return length;
 }
+
+long fact(int x)
+{
+    long r = 1;
+    for(int i = 0; i < x; i++)
+    {
+        r *= i+1;
+    }
+return r;  
+
+}
+void FreeLinkedPath(LinkedPath* head) {
+    LinkedPath* current = head;
+    LinkedPath* nextNode = nullptr;
+
+    while (current != nullptr) {
+        nextNode = current->nextPoint;
+        delete current;               
+        current = nextNode;           
+    }
+}
+
+

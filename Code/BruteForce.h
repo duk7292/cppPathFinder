@@ -5,21 +5,27 @@
 class BruteForce
 {
 private:
-    LineLinkedList *List = new LineLinkedList();
-    LineLinkedList *ListHead = List;
+    int iterations = 0;
+    int chNum = 0;
+
+    int maxPathCount;
 
     int shortestPathLength = INT_MAX;
 
-    LineLinkedList *ShortestPathHead = List;
+    int* counter;
 
-    LineLinkedList *getPathById(int id);
+    LinkedPath* Checkpoints;
 
-    int PathId = 0;
+    LinkedPath* shortestPath;
 
 public:
     BruteForce(Point *points, int p_Amount);
-    LineLinkedList *getShortesPathHead();
+   
     void iterate(int reps);
+
+    LinkedPath* getShortestPath();
+
+    
 };
 
 #endif

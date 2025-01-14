@@ -9,10 +9,10 @@ using namespace std;
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 
-void DrawLine(SDL_Renderer *renderer, Line *line)
+void DrawLine(SDL_Renderer *renderer, Point *pointA, Point* pointB)
 {
 
-    SDL_RenderDrawLine(renderer, line->A->x, line->A->y, line->B->x, line->B->y);
+    SDL_RenderDrawLine(renderer, pointA->x, pointA->y, pointB->x, pointB->y);
 }
 
 void DrawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius)
@@ -38,18 +38,22 @@ void DrawPoints(SDL_Renderer *renderer, Point *Points, int p_Amount)
         DrawCircle(renderer, Points[i].x, Points[i].y, 6);
     }
 }
-void DrawPath(SDL_Renderer *renderer, LineLinkedList *lineLinkedList)
+void DrawPath(SDL_Renderer *renderer, LinkedPath *linkedPath)
 {
-    LineLinkedList *current = lineLinkedList;
-    while (current)
+    LinkedPath *current = linkedPath;
+    Point * first = current->point;
+    while (current->nextPoint)
     {
-        DrawLine(renderer, current->line);
-        current = current->nextNode;
+        DrawLine(renderer, current->point,current->nextPoint->point);
+        current = current->nextPoint;
     }
+    DrawLine(renderer, current->point,first);
+
 }
 
 int main()
 {
+   
 
     int pointsAmount;
 
@@ -62,6 +66,9 @@ int main()
     {
         Points[i] = getRandomPoint(WINDOW_WIDTH, WINDOW_HEIGHT);
     }
+    BruteForce* brute = new BruteForce(Points,pointsAmount);
+
+    LinkedPath* path = brute->getShortestPath();
 
     //************* Window init
     // Initialize SDL
@@ -92,9 +99,16 @@ int main()
 
     bool running = true;
     SDL_Event event;
-
     while (running)
     {
+        
+        
+
+        brute-> iterate(10000);
+
+        //cout << brute->shortestPathLength << endl;
+
+        path = brute->getShortestPath();
         // Handle events
         while (SDL_PollEvent(&event))
         {
@@ -110,7 +124,7 @@ int main()
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
         DrawPoints(renderer, Points, pointsAmount);
-        // DrawPath(renderer, head);
+        DrawPath(renderer, path);
 
         SDL_RenderPresent(renderer);
     }
